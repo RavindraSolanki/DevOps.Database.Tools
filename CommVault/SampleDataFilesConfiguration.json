@@ -1,0 +1,17 @@
+[
+    {
+        "LogicalName": "SampleDb",
+        "SourceDatabaseName": "SampleDb",
+        "SourceDatabasePath": "C:\\Program Files\\Microsoft SQL Server\\MSSQL\\DATA\\SampleDb.mdf",
+        "DestinationDatabaseName": "SampleDb",
+        "DestinationDatabasePath": "C:\\Program Files\\Microsoft SQL Server\\MSSQL\\DATA\\SampleDb.mdf"
+        
+    },
+    {
+        "LogicalName": "SampleDb",
+        "SourceDatabaseName": "SampleDb",
+        "SourceDatabasePath": "C:\\Program Files\\Microsoft SQL Server\\MSSQL\\DATA\\SampleDb.ldf",
+        "DestinationDatabaseName": "SampleDb",
+        "DestinationDatabasePath": "C:\\Program Files\\Microsoft SQL Server\\MSSQL\\DATA\\SampleDb.ldf"
+    }
+]
