@@ -8,6 +8,7 @@ function Invoke-RemoteSqlCmd
         [Parameter(Mandatory)][string]$SqlServerComputerName,
         [Parameter(Mandatory)][string]$DatabaseName,
         [Parameter(Mandatory)][string]$SqlFilePath,
+        [string[]]$SqlVariables = $null,
         [string]$QueryTimeout = 30
     )
     Process
@@ -16,11 +17,12 @@ function Invoke-RemoteSqlCmd
         $credential = New-Object System.Management.Automation.PSCredential ($ExecuteAsUserName, $ExecuteAsUserPassword)
         $inputFileContent = Get-Content -Path $SqlFilePath -Raw
 
-        Invoke-Command -ComputerName $SqlServerComputerName -Credential $credential -ArgumentList $inputFileContent, $DatabaseName, $QueryTimeout -ScriptBlock {
+        Invoke-Command -ComputerName $SqlServerComputerName -Credential $credential -ArgumentList $inputFileContent, $DatabaseName, $SqlVariables, $QueryTimeout -ScriptBlock {
             Param
             (
                 [string]$SqlScript,
                 [string]$DbName,
+                [string[]]$Variables,
                 [int]$Timeout
             )
 
@@ -29,7 +31,14 @@ function Invoke-RemoteSqlCmd
                 $tmpSqlFile = [System.IO.Path]::GetTempFileName() + ".sql"
                 $SqlScript | Out-File -Append -FilePath $tmpSqlFile
 
-                Invoke-Sqlcmd -InputFile $tmpSqlFile -Database $DbName -QueryTimeout $Timeout
+                if ($null -eq $Variables)
+                {
+                    Invoke-Sqlcmd -InputFile $tmpSqlFile -Database $DbName -QueryTimeout $Timeout
+                }
+                else
+                {
+                    Invoke-Sqlcmd -InputFile $tmpSqlFile -Database $DbName -Variable $Variables -QueryTimeout $Timeout
+                }
             }
             finally
             {
