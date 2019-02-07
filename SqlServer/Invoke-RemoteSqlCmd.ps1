@@ -7,7 +7,8 @@ function Invoke-RemoteSqlCmd
         [Parameter(Mandatory)][securestring]$ExecuteAsUserPassword,
         [Parameter(Mandatory)][string]$SqlServerComputerName,
         [Parameter(Mandatory)][string]$DatabaseName,
-        [Parameter(Mandatory)][string]$SqlFilePath
+        [Parameter(Mandatory)][string]$SqlFilePath,
+        [string]$QueryTimeout = 30
     )
     Process
     {
@@ -15,11 +16,12 @@ function Invoke-RemoteSqlCmd
         $credential = New-Object System.Management.Automation.PSCredential ($ExecuteAsUserName, $ExecuteAsUserPassword)
         $inputFileContent = Get-Content -Path $SqlFilePath -Raw
 
-        Invoke-Command -ComputerName $SqlServerComputerName -Credential $credential -ArgumentList $inputFileContent, $DatabaseName -ScriptBlock {
+        Invoke-Command -ComputerName $SqlServerComputerName -Credential $credential -ArgumentList $inputFileContent, $DatabaseName, $QueryTimeout -ScriptBlock {
             Param
             (
                 [string]$SqlScript,
-                [string]$DbName
+                [string]$DbName,
+                [int]$Timeout
             )
 
             try
@@ -27,7 +29,7 @@ function Invoke-RemoteSqlCmd
                 $tmpSqlFile = [System.IO.Path]::GetTempFileName() + ".sql"
                 $SqlScript | Out-File -Append -FilePath $tmpSqlFile
 
-                Invoke-Sqlcmd -InputFile $tmpSqlFile -database $DbName
+                Invoke-Sqlcmd -InputFile $tmpSqlFile -Database $DbName -QueryTimeout $Timeout
             }
             finally
             {
