@@ -11,7 +11,7 @@ function Invoke-RemoteBackupSqlDatabase
     )
     Process
     {
-        Write-Host "Creating backup of $SqlServerComputerName '$DatabaseName'"
+        Write-Host "Creating backup of $SqlServerComputerName '$DatabaseName' and save to $BackupFilePath"
         $credential = New-Object System.Management.Automation.PSCredential ($ExecuteAsUserName, $ExecuteAsUserPassword)
 
         Invoke-Command -ComputerName $SqlServerComputerName -Credential $credential -ArgumentList $DatabaseName, $BackupFilePath -ScriptBlock {
@@ -20,6 +20,12 @@ function Invoke-RemoteBackupSqlDatabase
                 [string]$DbName,
                 [string]$BackupFile
             )
+
+            if (Test-Path -Path $BackupFile -PathType Leaf)
+            {
+                Write-Host "A previous backup file exist, removing $BackupFile"
+                Remove-Item -Path $BackupFile
+            }
 
             Backup-SqlDatabase -ServerInstance localhost -Database $DbName -BackupFile $BackupFile
         }
