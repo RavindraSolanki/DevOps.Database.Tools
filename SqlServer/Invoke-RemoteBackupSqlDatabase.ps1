@@ -7,7 +7,7 @@ function Invoke-RemoteBackupSqlDatabase
         [Parameter(Mandatory)][securestring]$ExecuteAsUserPassword,
         [Parameter(Mandatory)][string]$SqlServerComputerName,
         [Parameter(Mandatory)][string]$DatabaseName,
-        [Parameter(Mandatory)][string]$BackupFilePath
+        [string]$BackupFilePath
     )
     Process
     {
@@ -26,8 +26,15 @@ function Invoke-RemoteBackupSqlDatabase
                 Write-Host "A previous backup file exist, removing $BackupFile"
                 Remove-Item -Path $BackupFile
             }
-
-            Backup-SqlDatabase -ServerInstance localhost -Database $DbName -BackupFile $BackupFile
+			
+			if ($BackupFilePath -eq $null)
+			{
+				Backup-SqlDatabase -ServerInstance localhost -Database $DbName
+			}
+			else
+			{
+				Backup-SqlDatabase -ServerInstance localhost -Database $DbName -BackupFile $BackupFile
+			}
         }
     }
 }
