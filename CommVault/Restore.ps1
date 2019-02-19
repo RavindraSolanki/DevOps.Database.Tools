@@ -217,20 +217,9 @@ Function Start-CommVaultQOperation
         $cmd = Join-Path -Path (Get-CommVaultBasePath) -ChildPath "QOperation.exe" -Resolve
         Write-Verbose "Executing $cmd"
 
-        try {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-
-            Write-Output $xml | Out-File $tmpFile -Encoding utf8
-            
-            $stdout = (& $cmd execute -cs $commVaultHostName -tk $loginToken -af $tmpFile) | Out-String
-        }
-        finally {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-        }
+        Write-Output $xml | Out-File $tmpFile -Encoding utf8
+        
+        $stdout = (& $cmd execute -cs $commVaultHostName -tk $loginToken -af $tmpFile) | Out-String
 
         if ($LASTEXITCODE -ne 0) {
             throw "QOperation failed to create new job with error code $LASTEXITCODE"
