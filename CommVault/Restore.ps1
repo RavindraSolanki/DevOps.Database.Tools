@@ -191,25 +191,10 @@ Function Stop-CommVaultQOperation
     )
     Process
     {
-        $tmpFile = [System.IO.Path]::GetTempFileName() + ".xml"
-
         $cmd = Join-Path -Path (Get-CommVaultBasePath) -ChildPath "QOperation.exe" -Resolve
         Write-Verbose "Executing $cmd"
 
-        try {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-            
-            Write-Output $xml | Out-File $tmpFile -Encoding utf8
-
-            & $cmd jobcontrol -cs $CommVaultHostName -tk $LoginToken -j $JobId -o kill
-        }
-        finally {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-        }
+        & $cmd jobcontrol -cs $CommVaultHostName -tk $LoginToken -j $JobId -o kill
 
         if ($LASTEXITCODE -ne 0) {
             throw "QOperation failed to end execution of job $JobId with error code $LASTEXITCODE"
@@ -299,24 +284,10 @@ Function Invoke-CommVaultJobStatus
     )
     Process
     {
-        $tmpFile = [System.IO.Path]::GetTempFileName() + ".xml"
-
         $cmd = Join-Path -Path (Get-CommVaultBasePath) -ChildPath "QList.exe" -Resolve
         Write-Verbose "Executing $cmd"
 
-        try {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-            Write-Output $xml | Out-File $tmpFile -Encoding utf8
-
-            $stdout = (& $cmd job -cs $CommVaultHostName -tk $LoginToken -co isprc -j $JobId) | Out-String
-        }
-        finally {
-            if (Test-Path $tmpFile) {
-                Remove-Item -Path $tmpFile
-            }
-        }
+        $stdout = (& $cmd job -cs $CommVaultHostName -tk $LoginToken -co isprc -j $JobId) | Out-String
 
         if ($LASTEXITCODE -ne 0) {
             throw "QList failed with error code $LASTEXITCODE"
