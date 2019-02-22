@@ -1,3 +1,6 @@
+# Utility functions are placed in their own files, hence we're 'dot sourcing' them from this module
+Get-ChildItem -Path $PSScriptRoot\*.ps1 | ForEach-Object { . $_.FullName }
+
 Function Invoke-CommVaultDatabaseRestore
 {
     [CmdletBinding()]
