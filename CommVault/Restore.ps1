@@ -222,7 +222,7 @@ Function Start-CommVaultQOperation
         $stdout = (& $cmd execute -cs $commVaultHostName -tk $loginToken -af $tmpFile) | Out-String
 
         if ($LASTEXITCODE -ne 0) {
-            throw "QOperation failed to create new job with error code $LASTEXITCODE"
+            throw "QOperation failed to create new job with error code $LASTEXITCODE.`n$stdout"
         }
 
         $xmlOutput = [xml]$stdout
