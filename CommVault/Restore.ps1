@@ -263,6 +263,11 @@ Function Wait-CommVaultJobCompletion
                     Write-Host $line
                 }
 
+                if ($jobStatus.FailureOrPendingReason -imatch 'error|exception')
+                {
+                    throw "Failure/pending reasons message contains the 'error' or 'exception' keywords. CommVault job has probably failed."
+                }
+
                 if ($TimeoutAfter -eq [datetime]::MaxValue)
                 {
                     $TimeoutAfter = [datetime]::UtcNow.AddMinutes(20)
