@@ -90,18 +90,21 @@ Function Invoke-CommVaultDatabaseRestore
                             -JobId $jobId
 
             if ($jobStatus.FailureReason.length -gt 0) {
-                Write-Error "An error has occured: $($jobStatus.FailureReason)`r`n$($jobStatus.StatusRaw)"
-
-                Write-Verbose "Job with id '$jobId' is being killed"
-                Stop-CommVaultQOperation `
-                    -LoginToken $loginToken `
-                    -CommVaultHostName $commVaultHostName `
-                    -JobId $jobId
-
                 throw "CommVault database restore job '$jobId' failed"
             }
 
             Write-Host 'CommVault database restore job '$jobId' successfully completed'
+        }
+        Catch {
+            if ($jobId) {
+                Write-Error "An error has occured: $($jobStatus.FailureReason)`r`n$($jobStatus.StatusRaw)"
+
+                Write-Host "Job with id '$jobId' is being killed"
+                Stop-CommVaultQOperation `
+                    -LoginToken $loginToken `
+                    -CommVaultHostName $commVaultHostName `
+                    -JobId $jobId
+            }
         }
         Finally {
             Write-Host "Releasing CommVault token"
