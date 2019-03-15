@@ -1,0 +1,4 @@
+# =========================
+# Pester test result files
+# =========================
+TestResults*.xml
