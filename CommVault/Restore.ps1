@@ -270,7 +270,7 @@ Function Wait-CommVaultJobCompletion
 
                 if ($TimeoutAfter -eq [datetime]::MaxValue)
                 {
-                    $TimeoutAfter = [datetime]::UtcNow.AddMinutes(20)
+                    $TimeoutAfter = [datetime]::UtcNow.AddMinutes(60)
                 }
             }
 
