@@ -105,6 +105,8 @@ Function Invoke-CommVaultDatabaseRestore
                     -CommVaultHostName $commVaultHostName `
                     -JobId $jobId
             }
+
+            $PSCmdlet.ThrowTerminatingError($PSItem)
         }
         Finally {
             Write-Host "Releasing CommVault token"
